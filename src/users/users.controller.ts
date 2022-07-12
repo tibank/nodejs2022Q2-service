@@ -3,15 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -23,7 +26,8 @@ export class UsersController {
 
   @Get()
   findAll() {
-    return this.usersService.findAll();
+    const data = this.usersService.findAll();
+    return data;
   }
 
   @Get(':id')
@@ -40,6 +44,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
