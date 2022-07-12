@@ -33,8 +33,7 @@ class UserRepository {
     const index = this.users.findIndex((item: User) => item.id === id);
 
     if (~index) {
-      this.users = this.users;
-
+      this.users = this.users.filter((item: User) => item.id !== id);
       return 1;
     }
 
