@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
@@ -20,46 +25,36 @@ export class UsersService {
   }
 
   findAll() {
-    const createUserDto: CreateUserDto = {
-      login: 'pupsik',
-      password: '1234567890',
-    };
-    const newUser = new User(createUserDto);
-    this.users.push(newUser);
     return this.users;
   }
 
   findOne(id: string) {
-    if (id && validate(id)) {
-      const user = this.users.find((item: User) => item.id === id);
-      if (user) {
-        return user;
-      } else {
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: `There is no user with id: ${id}`,
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
+    const user = this.users.find((item: User) => item.id === id);
+    if (user) {
+      return user;
     } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: `The id: ${id} is invalid`,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new NotFoundException(`There is no user with id: ${id}`);
     }
   }
 
   update(id: string, updatePasswordDto: UpdatePasswordDto) {
     const user = this.users.find((item: User) => item.id === id);
     if (user) {
-      user.password = updatePasswordDto.newPassword;
-      user.version += 1;
-      user.updatedAt = Date.now();
+      if (user.password === updatePasswordDto.oldPassowrd) {
+        user.password = updatePasswordDto.newPassword;
+        user.version += 1;
+        user.updatedAt = Date.now();
+      } else {
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            error: `Old password is incorrect`,
+          },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+    } else {
+      throw new NotFoundException(`There is no user with id: ${id}`);
     }
     return user;
   }
@@ -73,6 +68,8 @@ export class UsersService {
       tempDb.forEach((user: User) =>
         user.id !== id ? this.users.push(user) : '',
       );
+    } else {
+      throw new NotFoundException(`There is no user with id: ${id}`);
     }
   }
 }
