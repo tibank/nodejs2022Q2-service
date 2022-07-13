@@ -24,19 +24,19 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
+    return await this.usersService.create(createUserDto);
   }
 
   @Get()
   async findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
   async findOne(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<User> {
-    return this.usersService.findOne(id);
+    return await this.usersService.findOne(id);
   }
 
   @Put(':id')
@@ -44,24 +44,15 @@ export class UsersController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
-    const data: User = await this.usersService.update(id, updatePasswordDto);
-    if (data) {
-      return data;
-    } else {
-      throw new NotFoundException(`There is no user with id: ${id}`);
-    }
+    return await this.usersService.update(id, updatePasswordDto);
+
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): Promise<User> {
-    const data: User = await this.usersService.remove(id);
-    if (data) {
-      return data;
-    } else {
-      throw new NotFoundException(`There is no user with id: ${id}`);
-    }
+  ): Promise<void> {
+    await this.usersService.remove(id);
   }
 }

@@ -36,25 +36,33 @@ export class ArtistsService {
     }
   }
 
-  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+  async update(id: string, { name, grammy }: UpdateArtistDto): Promise<Artist> {
     const artist = this.artists.find((item: Artist) => item.id === id);
-    if (!artist) {
+    if (artist) {
+      if (name) {
+        artist.name = name;
+      }
+  
+      if (grammy) {
+        artist.grammy = grammy;
+      }     
+    } else {
       throw new NotFoundException(`There is no artist with id: ${id}`);
     }
     return artist;
   }
 
   async remove(id: string): Promise<void> {
-    const index = this.artists.findIndex((item: Artist) => item.id === id);
+    const artist:Artist = this.artists.find((item: Artist) => item.id === id);
 
-    if (~index) {
+    if (artist) {
       const tempDb: Artist[] = [...this.artists];
       this.artists.length = 0;
-      tempDb.forEach((artist: Artist) =>
-        artist.id !== id ? this.artists.push(artist) : '',
-      );
+      tempDb.forEach((item: Artist) =>
+      item.id !== id ? this.artists.push(item) : '',
+      )
     } else {
-      //throw new NotFoundException(`There is no artist with id: ${id}`);
+      throw new NotFoundException(`There is no artist with id: ${id}`);
     }
   }
 }

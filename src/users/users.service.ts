@@ -8,7 +8,6 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
-import { validate } from 'uuid';
 
 @Injectable()
 export class UsersService {
@@ -18,18 +17,18 @@ export class UsersService {
     this.users = [];
   }
 
-  create(createUserDto: CreateUserDto): User {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = new User(createUserDto);
     this.users.push(newUser);
 
     return newUser;
   }
 
-  findAll() {
+  async findAll(): Promise<User[]> {
     return this.users;
   }
 
-  findOne(id: string) {
+  async findOne(id: string): Promise<User> {
     const user = this.users.find((item: User) => item.id === id);
     if (user) {
       return user;
@@ -48,13 +47,13 @@ export class UsersService {
         user.password = updatePasswordDto.newPassword;
         user.version += 1;
         user.updatedAt = Date.now();
+        return user;
       } else {
         throw new ForbiddenException(`Old password is incorrect`);
       }
     } else {
       throw new NotFoundException(`There is no user with id: ${id}`);
     }
-    return user;
   }
 
   async remove(id: string): Promise<void> {

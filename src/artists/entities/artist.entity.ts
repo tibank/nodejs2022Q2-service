@@ -12,6 +12,5 @@ export class Artist {
   constructor(partial: Partial<Artist>) {
     Object.assign(this, partial);
     this.id = uuidv4();
-    this.grammy = false;
   }
 }
