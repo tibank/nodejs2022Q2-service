@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -37,7 +38,10 @@ export class UsersService {
     }
   }
 
-  update(id: string, updatePasswordDto: UpdatePasswordDto) {
+  async update(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
     const user = this.users.find((item: User) => item.id === id);
     if (user) {
       if (user.password === updatePasswordDto.oldPassowrd) {
@@ -45,13 +49,7 @@ export class UsersService {
         user.version += 1;
         user.updatedAt = Date.now();
       } else {
-        throw new HttpException(
-          {
-            status: HttpStatus.FORBIDDEN,
-            error: `Old password is incorrect`,
-          },
-          HttpStatus.FORBIDDEN,
-        );
+        throw new ForbiddenException(`Old password is incorrect`);
       }
     } else {
       throw new NotFoundException(`There is no user with id: ${id}`);
@@ -59,10 +57,10 @@ export class UsersService {
     return user;
   }
 
-  remove(id: string) {
-    const index = this.users.findIndex((item: User) => item.id === id);
+  async remove(id: string): Promise<void> {
+    const user = this.users.find((item: User) => item.id === id);
 
-    if (~index) {
+    if (user) {
       const tempDb: User[] = [...this.users];
       this.users.length = 0;
       tempDb.forEach((user: User) =>

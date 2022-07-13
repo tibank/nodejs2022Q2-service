@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
@@ -49,7 +54,7 @@ export class ArtistsService {
         artist.id !== id ? this.artists.push(artist) : '',
       );
     } else {
-      throw new NotFoundException(`There is no artist with id: ${id}`);
+      //throw new NotFoundException(`There is no artist with id: ${id}`);
     }
   }
 }
