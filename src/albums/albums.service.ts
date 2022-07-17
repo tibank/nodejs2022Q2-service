@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InMemoryDB } from 'src/helper/app.datastore';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { Album } from './entities/album.entity';
 
 @Injectable()
 export class AlbumsService {
-  create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+  async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+    const newAlbum = new Album(createAlbumDto);
+    InMemoryDB.albums.push(newAlbum);
+
+    return newAlbum;
   }
 
-  findAll() {
-    return `This action returns all albums`;
+  async findAll(): Promise<Album[]> {
+    return InMemoryDB.albums;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
+  async findOne(id: string): Promise<Album> {
+    const album = InMemoryDB.albums.find((item: Album) => item.id === id);
+    if (album) {
+      return album;
+    } else {
+      throw new NotFoundException(`There is no album with id: ${id}`);
+    }
   }
 
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+  async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
+    const album = InMemoryDB.albums.find((item: Album) => item.id === id);
+
+    if (album) {
+      Object.assign(album, updateAlbumDto);
+    } else {
+      throw new NotFoundException(`There is no album with id: ${id}`);
+    }
+    return album;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} album`;
+  async remove(id: string): Promise<Album | undefined> {
+    const album: Album = InMemoryDB.albums.find(
+      (item: Album) => item.id === id,
+    );
+
+    if (album) {
+      InMemoryDB.albums = InMemoryDB.albums.filter((item) => item.id !== id);
+      return album;
+    } else {
+      throw new NotFoundException(`There is no album with id: ${id}`);
+    }
   }
 }

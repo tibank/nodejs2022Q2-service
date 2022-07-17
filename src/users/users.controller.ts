@@ -24,6 +24,7 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    console.log(createUserDto);
     return await this.usersService.create(createUserDto);
   }
 
@@ -45,14 +46,13 @@ export class UsersController {
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
     return await this.usersService.update(id, updatePasswordDto);
-
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): Promise<void> {
-    await this.usersService.remove(id);
+  ): Promise<User> {
+    return await this.usersService.remove(id);
   }
 }
