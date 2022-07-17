@@ -53,7 +53,7 @@ export class AlbumsService {
       InMemoryFavDB.albums = InMemoryFavDB.albums.filter(
         (albumId) => albumId !== id,
       );
-            
+
       return album;
     } else {
       throw new NotFoundException(`There is no album with id: ${id}`);

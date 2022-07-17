@@ -2,16 +2,12 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Put,
   Param,
   Delete,
   ParseUUIDPipe,
   HttpCode,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
 import { FavoritesRepsonse } from 'src/helper/fav.response';
 
 @Controller('favs')

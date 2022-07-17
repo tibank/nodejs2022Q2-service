@@ -1,6 +1,5 @@
 import {
   ForbiddenException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,8 +10,6 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor() {}
-
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = new User(createUserDto);
     InMemoryDB.users.push(newUser);

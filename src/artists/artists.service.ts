@@ -7,8 +7,6 @@ import { InMemoryFavDB } from 'src/helper/fav.datastorey';
 
 @Injectable()
 export class ArtistsService {
-  constructor() {}
-
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const newArtist = new Artist(createArtistDto);
     InMemoryDB.artists.push(newArtist);

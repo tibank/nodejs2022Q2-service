@@ -29,18 +29,25 @@ export class AlbumsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): Promise<Album | undefined> {
+  async findOne(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Album | undefined> {
     return this.albumsService.findOne(id);
   }
 
   @Put(':id')
-  async update(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string, @Body() updateAlbumDto: UpdateAlbumDto): Promise<Album | undefined> {
+  async update(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ): Promise<Album | undefined> {
     return this.albumsService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): Promise<Album | undefined> {
+  async remove(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Album | undefined> {
     return this.albumsService.remove(id);
   }
 }
