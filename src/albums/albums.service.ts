@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InMemoryDB } from 'src/helper/app.datastore';
+import { InMemoryFavDB } from 'src/helper/fav.datastorey';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
@@ -49,6 +50,10 @@ export class AlbumsService {
           item.albumId = null;
         }
       });
+      InMemoryFavDB.albums = InMemoryFavDB.albums.filter(
+        (albumId) => albumId !== id,
+      );
+            
       return album;
     } else {
       throw new NotFoundException(`There is no album with id: ${id}`);

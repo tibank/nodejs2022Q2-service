@@ -3,6 +3,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { InMemoryDB } from 'src/helper/app.datastore';
+import { InMemoryFavDB } from 'src/helper/fav.datastorey';
 
 @Injectable()
 export class ArtistsService {
@@ -56,6 +57,9 @@ export class ArtistsService {
           item.artistId = null;
         }
       });
+      InMemoryFavDB.artists = InMemoryFavDB.artists.filter(
+        (artistId) => artistId !== id,
+      );
       return artist;
     } else {
       throw new NotFoundException(`There is no artist with id: ${id}`);
