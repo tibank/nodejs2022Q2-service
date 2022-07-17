@@ -46,12 +46,16 @@ export class ArtistsService {
 
     if (artist) {
       InMemoryDB.artists = InMemoryDB.artists.filter((item) => item.id !== id);
-      InMemoryDB.albums = InMemoryDB.albums.map(
-        (item) => item.artistId !== id ? item : (item.artistId = null)
-      );
-      InMemoryDB.tracks = InMemoryDB.tracks.map(
-        (item) => item.artistId !== id ? item : (item.artistId = null)
-      );
+      InMemoryDB.albums.forEach((item) => {
+        if (item.artistId === id) {
+          item.artistId = null;
+        }
+      });
+      InMemoryDB.tracks.forEach((item) => {
+        if (item.artistId === id) {
+          item.artistId = null;
+        }
+      });
       return artist;
     } else {
       throw new NotFoundException(`There is no artist with id: ${id}`);

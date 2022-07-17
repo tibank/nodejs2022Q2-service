@@ -44,6 +44,11 @@ export class AlbumsService {
 
     if (album) {
       InMemoryDB.albums = InMemoryDB.albums.filter((item) => item.id !== id);
+      InMemoryDB.tracks.forEach((item) => {
+        if (item.albumId === id) {
+          item.albumId = null;
+        }
+      });
       return album;
     } else {
       throw new NotFoundException(`There is no album with id: ${id}`);

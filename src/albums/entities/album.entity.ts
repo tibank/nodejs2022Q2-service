@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
 
 export class Album {
@@ -8,8 +8,9 @@ export class Album {
   name: string;
   @IsInt()
   year: number;
+  @IsOptional()
   @IsNotEmpty()
-  artistId: string;
+  artistId: string|null;
 
   constructor(partial: Partial<Album>) {
     Object.assign(this, partial);
