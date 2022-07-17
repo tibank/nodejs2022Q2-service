@@ -6,6 +6,7 @@ import { readFile } from 'fs/promises';
 import { parse } from 'yaml';
 import { cwd } from 'process';
 import { ValidationPipe } from '@nestjs/common';
+import 'dotenv/config'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,7 +17,9 @@ async function bootstrap() {
   const DOC_API = await readFile(resolve(cwd(), 'doc', 'api.yaml'), 'utf-8');
   const document = parse(DOC_API);
   SwaggerModule.setup('api', app, document);
-  await app.listen(4000);
+
+  const PORT = process.env.PORT || 3000;
+  await app.listen(PORT);
 }
 
 bootstrap();
