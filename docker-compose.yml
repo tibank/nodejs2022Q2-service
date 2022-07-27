@@ -1,21 +1,10 @@
 services:
-  node:
-    build: .
-    restart: always
-    networks:
-      - nest_network
-    ports:
-      - ${PORT}:${PORT}
-    depends_on:
-      - postgres
-    volumes:
-      - ./:/usr/src/app/
-      - /usr/src/app/node_modules
+  postgres:
+    container_name: my-postgres
+    build: ./database/
+    restart: on-failure
     env_file:
       - .env
-  postgres:
-    build: ./database/
-    restart: always
     networks:
       - nest_network
     ports:
@@ -25,7 +14,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - ./db:/var/lib/postgresql/data
 
 networks:
   nest_network:

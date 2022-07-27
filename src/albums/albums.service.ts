@@ -58,7 +58,6 @@ export class AlbumsService {
     } else {
       throw new NotFoundException(`There is no album with id: ${id}`);
     }
-    return album;
   }
 
   async remove(id: string): Promise<Album | undefined> {
