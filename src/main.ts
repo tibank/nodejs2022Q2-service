@@ -6,7 +6,6 @@ import { readFile } from 'fs/promises';
 import { parse } from 'yaml';
 import { cwd } from 'process';
 import { ValidationPipe } from '@nestjs/common';
-import 'dotenv/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
