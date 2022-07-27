@@ -4,22 +4,27 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { InMemoryDB } from 'src/helper/app.datastore';
 import { InMemoryFavDB } from 'src/helper/fav.datastorey';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ArtistsService {
+  constructor(
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
+  ) {}
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const newArtist = new Artist(createArtistDto);
-    InMemoryDB.artists.push(newArtist);
-
-    return newArtist;
+    
+    return await this.artistRepository.save(newArtist);
   }
 
   async findAll(): Promise<Artist[]> {
-    return InMemoryDB.artists;
+    return await this.artistRepository.find();
   }
 
   async findOne(id: string): Promise<Artist> {
-    const artist = InMemoryDB.artists.find((item: Artist) => item.id === id);
+    const artist: Artist | null = await this.artistRepository.findOneBy({ id });
     if (artist) {
       return artist;
     } else {
@@ -28,10 +33,11 @@ export class ArtistsService {
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
-    const artist = InMemoryDB.artists.find((item: Artist) => item.id === id);
+    const artist: Artist | null = await this.artistRepository.findOneBy({ id });
 
     if (artist) {
       Object.assign(artist, updateArtistDto);
+      return this.artistRepository.save(artist);
     } else {
       throw new NotFoundException(`There is no artist with id: ${id}`);
     }
@@ -39,25 +45,10 @@ export class ArtistsService {
   }
 
   async remove(id: string): Promise<Artist | undefined> {
-    const artist: Artist = InMemoryDB.artists.find(
-      (item: Artist) => item.id === id,
-    );
+    const artist: Artist | null = await this.artistRepository.findOneBy({ id });
 
     if (artist) {
-      InMemoryDB.artists = InMemoryDB.artists.filter((item) => item.id !== id);
-      InMemoryDB.albums.forEach((item) => {
-        if (item.artistId === id) {
-          item.artistId = null;
-        }
-      });
-      InMemoryDB.tracks.forEach((item) => {
-        if (item.artistId === id) {
-          item.artistId = null;
-        }
-      });
-      InMemoryFavDB.artists = InMemoryFavDB.artists.filter(
-        (artistId) => artistId !== id,
-      );
+      await this.artistRepository.remove(artist);
       return artist;
     } else {
       throw new NotFoundException(`There is no artist with id: ${id}`);
