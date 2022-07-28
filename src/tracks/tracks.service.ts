@@ -30,6 +30,14 @@ export class TracksService {
         newTrack.artist = artist;
       }
     }
+    if (createTrackDto.albumId) {
+      const album: Album | null = await this.albumRepository.findOneBy({
+        id: createTrackDto.albumId,
+      });
+      if (album) {
+        newTrack.album = album;
+      }
+    }
 
     return await this.trackRepository.save(newTrack);
   }
@@ -58,6 +66,23 @@ export class TracksService {
 
     if (track) {
       Object.assign(track, updateTrackDto);
+      if (updateTrackDto.artistId) {
+        const artist: Artist | null = await this.artistRepository.findOneBy({
+          id: updateTrackDto.artistId,
+        });
+        if (artist) {
+          track.artist = artist;
+        }
+      }
+      if (updateTrackDto.albumId) {
+        const album: Album | null = await this.albumRepository.findOneBy({
+          id: updateTrackDto.albumId,
+        });
+        if (album) {
+          track.album = album;
+        }
+      }
+
       return this.albumRepository.save(track);
     } else {
       throw new NotFoundException(`There is no album with id: ${id}`);

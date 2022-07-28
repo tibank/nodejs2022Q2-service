@@ -2,8 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
-import { InMemoryDB } from 'src/helper/app.datastore';
-import { InMemoryFavDB } from 'src/helper/fav.datastorey';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -15,7 +13,7 @@ export class ArtistsService {
   ) {}
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const newArtist = new Artist(createArtistDto);
-    
+
     return await this.artistRepository.save(newArtist);
   }
 

@@ -54,6 +54,17 @@ export class AlbumsService {
 
     if (album) {
       Object.assign(album, updateAlbumDto);
+      if (updateAlbumDto.artistId) {
+        const artist: Artist | null = await this.artistRepository.findOneBy({
+          id: updateAlbumDto.artistId,
+        });
+        if (artist) {
+          album.artist = artist;
+        }
+      } else {
+        album.artist = null;
+      }
+
       return this.albumRepository.save(album);
     } else {
       throw new NotFoundException(`There is no album with id: ${id}`);

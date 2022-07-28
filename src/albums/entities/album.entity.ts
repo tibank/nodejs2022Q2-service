@@ -23,7 +23,6 @@ export class Album {
   year: number;
 
   @IsOptional()
-  @IsNotEmpty()
   @OneToOne(() => Artist, { onDelete: 'SET NULL' })
   @JoinColumn()
   artist: Artist;
