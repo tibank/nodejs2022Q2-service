@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { FavoritesRepsonse } from 'src/helper/fav.response';
+import { Favorite } from './entities/favorite.entity';
 
 @Controller('favs')
 export class FavoritesController {
@@ -36,7 +37,7 @@ export class FavoritesController {
   }
 
   @Get()
-  async findAll(): Promise<FavoritesRepsonse> {
+  async findAll(): Promise<Favorite> {
     return this.favoritesService.findAll();
   }
 

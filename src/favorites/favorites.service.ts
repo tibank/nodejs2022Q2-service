@@ -3,6 +3,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from 'src/albums/entities/album.entity';
 import { ArtistsService } from 'src/artists/artists.service';
 import { Artist } from 'src/artists/entities/artist.entity';
@@ -10,113 +11,98 @@ import { InMemoryDB } from 'src/helper/app.datastore';
 import { InMemoryFavDB } from 'src/helper/fav.datastorey';
 import { FavoritesRepsonse } from 'src/helper/fav.response';
 import { Track } from 'src/tracks/entities/track.entity';
+import { Repository } from 'typeorm';
+import { Favorite } from './entities/favorite.entity';
+import { FavoriteAlbums } from './entities/favoriteAlbums.entity';
+import { FavoriteArtists } from './entities/favoriteArtists.entity';
+import { FavoriteTracks } from './entities/favoriteTracks.entity';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private readonly artistsService: ArtistsService) {}
+  constructor(
+    @InjectRepository(Track)
+    private trackRepository: Repository<Track>,
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
+    @InjectRepository(FavoriteTracks)
+    private trackFavRepository: Repository<FavoriteTracks>,
+    @InjectRepository(FavoriteAlbums)
+    private albumFavRepository: Repository<FavoriteAlbums>,
+    @InjectRepository(FavoriteArtists)
+    private artistFavRepository: Repository<FavoriteArtists>,
+  ) {}
 
   async createArtistFav(id: string): Promise<string> {
-    const artist = InMemoryDB.artists.find((item: Artist) => item.id === id);
+    console.log(id);
+    const artist: Artist | null = await this.artistRepository.findOneBy({ id });
+    console.log(artist);
     if (artist) {
-      InMemoryFavDB.artists.push(artist.id);
+      const newFav = new FavoriteArtists(artist);
+      await this.artistFavRepository.save(newFav);
     } else {
       throw new UnprocessableEntityException(
-        `There is no artist with id: ${id} to add to favorites`,
+        `There is no artist with id: ${id}`,
       );
     }
-    return id;
+
+    return `Artist ${artist.name} is added into favourites`;
   }
 
   async createTrackFav(id: string): Promise<string> {
-    const track = InMemoryDB.tracks.find((item: Track) => item.id === id);
+    const track: Track | null = await this.trackRepository.findOneBy({ id });
     if (track) {
-      InMemoryFavDB.tracks.push(track.id);
+      const newFav = new FavoriteTracks(track);
+      await this.trackFavRepository.save(newFav);
     } else {
       throw new UnprocessableEntityException(
-        `There is no track with id: ${id} to add to favorites`,
+        `There is no track with id: ${id}`,
       );
     }
-    return id;
+
+    return `Track ${track.name} is added into favourites`;
   }
 
   async createAlbumFav(id: string): Promise<string> {
-    const album = InMemoryDB.albums.find((item: Album) => item.id === id);
+    const album: Album | null = await this.albumRepository.findOneBy({ id });
     if (album) {
-      InMemoryFavDB.albums.push(album.id);
+      const newFav = new FavoriteAlbums(album);
+      await this.albumFavRepository.save(newFav);
     } else {
       throw new UnprocessableEntityException(
-        `There is no album with id: ${id} to add to favorites`,
+        `There is no album with id: ${id}`,
       );
     }
-    return id;
+
+    return `Album ${album.name} is added into favourites`;
   }
 
-  async findAll(): Promise<FavoritesRepsonse> {
-    const res = new FavoritesRepsonse();
+  async findAll(): Promise<Favorite> {
+    const artists: FavoriteArtists[] = await this.artistFavRepository.find();
+    const albums: FavoriteAlbums[] = await this.albumFavRepository.find();
+    const tracks: FavoriteTracks[] = await this.trackFavRepository.find();
 
-    for (let i = 0; i < InMemoryFavDB.artists.length; i++) {
-      const id = InMemoryFavDB.artists[i];
-      const artist = InMemoryDB.artists.find((item: Artist) => item.id === id);
-      if (artist) {
-        res.artists.push(artist);
-      }
-    }
+    const favorite: Favorite = new Favorite(artists, albums, tracks);
 
-    for (let i = 0; i < InMemoryFavDB.albums.length; i++) {
-      const id = InMemoryFavDB.albums[i];
-      const album = InMemoryDB.albums.find((item: Album) => item.id === id);
-      if (album) {
-        res.albums.push(album);
-      }
-    }
-
-    for (let i = 0; i < InMemoryFavDB.tracks.length; i++) {
-      const id = InMemoryFavDB.tracks[i];
-      const track = InMemoryDB.tracks.find((item: Track) => item.id === id);
-      if (track) {
-        res.tracks.push(track);
-      }
-    }
-
-    return res;
+    return favorite;
   }
 
   async removeArtistFav(id: string): Promise<string> {
-    const countFav = InMemoryFavDB.artists.length;
-    InMemoryFavDB.artists = InMemoryFavDB.artists.filter(
-      (artistId) => artistId !== id,
-    );
-    if (countFav === InMemoryFavDB.artists.length) {
-      throw new NotFoundException(
-        `There is no artist with id: ${id} in favorites`,
-      );
-    }
-    return id;
+    const str: string = '';
+
+    return str;
   }
 
   async removeAlbumFav(id: string): Promise<string> {
-    const countFav = InMemoryFavDB.albums.length;
-    InMemoryFavDB.albums = InMemoryFavDB.albums.filter(
-      (albumId) => albumId !== id,
-    );
-    if (countFav === InMemoryFavDB.albums.length) {
-      throw new NotFoundException(
-        `There is no album with id: ${id} in favorites`,
-      );
-    }
-    return id;
+    const str: string = '';
+
+    return str;
   }
 
   async removeTrackFav(id: string): Promise<string> {
-    const countFav = InMemoryFavDB.tracks.length;
-    InMemoryFavDB.tracks = InMemoryFavDB.tracks.filter(
-      (trackId) => trackId !== id,
-    );
-    if (countFav === InMemoryFavDB.tracks.length) {
-      throw new NotFoundException(
-        `There is no track with id: ${id} in favorites`,
-      );
-    }
-    return id;
+    const str: string = '';
+
+    return str;
   }
 }
