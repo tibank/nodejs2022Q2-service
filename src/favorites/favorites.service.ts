@@ -5,11 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from 'src/albums/entities/album.entity';
-import { ArtistsService } from 'src/artists/artists.service';
 import { Artist } from 'src/artists/entities/artist.entity';
-import { InMemoryDB } from 'src/helper/app.datastore';
-import { InMemoryFavDB } from 'src/helper/fav.datastorey';
-import { FavoritesRepsonse } from 'src/helper/fav.response';
 import { Track } from 'src/tracks/entities/track.entity';
 import { Repository } from 'typeorm';
 import { Favorite } from './entities/favorite.entity';
@@ -79,9 +75,15 @@ export class FavoritesService {
   }
 
   async findAll(): Promise<Favorite> {
-    const artists: FavoriteArtists[] = await this.artistFavRepository.find();
-    const albums: FavoriteAlbums[] = await this.albumFavRepository.find();
-    const tracks: FavoriteTracks[] = await this.trackFavRepository.find();
+    const artistsFav: FavoriteArtists[] = await this.artistFavRepository.find();
+    console.log(artistsFav);
+    const artists: Artist[] = artistsFav.map((item) => item.artist);
+
+    const albumsFav: FavoriteAlbums[] = await this.albumFavRepository.find();
+    const albums: Album[] = albumsFav.map((item) => item.album);
+
+    const tracksFav: FavoriteTracks[] = await this.trackFavRepository.find();
+    const tracks: Track[] = tracksFav.map((item) => item.track);
 
     const favorite: Favorite = new Favorite(artists, albums, tracks);
 
@@ -89,20 +91,42 @@ export class FavoritesService {
   }
 
   async removeArtistFav(id: string): Promise<string> {
-    const str: string = '';
+    const artists: FavoriteArtists[] = await this.artistFavRepository.find({
+      where: {
+        artist: {
+          id,
+        },
+      },
+    });
+    console.log(artists);
+    await this.artistFavRepository.remove(artists);
 
-    return str;
+    return '';
   }
 
   async removeAlbumFav(id: string): Promise<string> {
-    const str: string = '';
+    const albums: FavoriteAlbums[] = await this.albumFavRepository.find({
+      where: {
+        album: {
+          id,
+        },
+      },
+    });
+    await this.albumFavRepository.remove(albums);
 
-    return str;
+    return '';
   }
 
   async removeTrackFav(id: string): Promise<string> {
-    const str: string = '';
+    const tracks: FavoriteTracks[] = await this.trackFavRepository.find({
+      where: {
+        track: {
+          id,
+        },
+      },
+    });
+    await this.trackFavRepository.remove(tracks);
 
-    return str;
+    return '';
   }
 }

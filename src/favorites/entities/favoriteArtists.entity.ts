@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
 import { Artist } from 'src/artists/entities/artist.entity';
 import {
@@ -13,10 +14,13 @@ import {
 export class FavoriteArtists {
   @PrimaryGeneratedColumn('uuid')
   @IsNotEmpty()
+  @Exclude()
   id: string;
 
   @IsNotEmpty()
-  @OneToOne(() => Artist, { onDelete: 'SET NULL' })
+  @OneToOne(() => Artist, {
+    eager: true,
+  })
   @JoinColumn()
   artist: Artist;
 

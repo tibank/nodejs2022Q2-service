@@ -17,7 +17,9 @@ export class FavoriteAlbums {
   id: string;
 
   @IsNotEmpty()
-  @OneToOne(() => Album, { onDelete: 'SET NULL' })
+  @OneToOne(() => Album, {
+    eager: true,
+  })
   @JoinColumn()
   album: Album;
 

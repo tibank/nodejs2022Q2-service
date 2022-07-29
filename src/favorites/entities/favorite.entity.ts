@@ -1,17 +1,13 @@
-import { FavoriteAlbums } from './favoriteAlbums.entity';
-import { FavoriteArtists } from './favoriteArtists.entity';
-import { FavoriteTracks } from './favoriteTracks.entity';
+import { Album } from 'src/albums/entities/album.entity';
+import { Artist } from 'src/artists/entities/artist.entity';
+import { Track } from 'src/tracks/entities/track.entity';
 
 export class Favorite {
-  artists: FavoriteArtists[];
-  albums: FavoriteAlbums[];
-  tracks: FavoriteTracks[];
+  artists: Artist[];
+  albums: Album[];
+  tracks: Track[];
 
-  constructor(
-    artists: FavoriteArtists[],
-    albums: FavoriteAlbums[],
-    tracks: FavoriteTracks[],
-  ) {
+  constructor(artists: Artist[], albums: Album[], tracks: Track[]) {
     this.artists = artists;
     this.albums = albums;
     this.tracks = tracks;

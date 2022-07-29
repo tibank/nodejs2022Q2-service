@@ -9,7 +9,9 @@ export class FavoriteTracks {
   id: string;
 
   @IsNotEmpty()
-  @OneToOne(() => Track, { onDelete: 'SET NULL' })
+  @OneToOne(() => Track, {
+    eager: true,
+  })
   @JoinColumn()
   track: Track;
 

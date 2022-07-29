@@ -4,12 +4,15 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from 'src/albums/entities/album.entity';
 
 @Injectable()
 export class ArtistsService {
   constructor(
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,    
   ) {}
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const newArtist = new Artist(createArtistDto);
@@ -47,6 +50,7 @@ export class ArtistsService {
 
     if (artist) {
       await this.artistRepository.remove(artist);
+
       return artist;
     } else {
       throw new NotFoundException(`There is no artist with id: ${id}`);

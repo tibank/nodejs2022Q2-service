@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,12 +22,12 @@ export class Track {
   name: string;
 
   @IsOptional()
-  @OneToOne(() => Artist, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Artist, { onDelete: 'SET NULL', eager: true })
   @JoinColumn()
   artist: Artist;
 
   @IsOptional()
-  @OneToOne(() => Album, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Album, { onDelete: 'SET NULL', eager: true })
   @JoinColumn()
   album: Album;
 

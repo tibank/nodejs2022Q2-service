@@ -3,9 +3,13 @@ import { ArtistsService } from './artists.service';
 import { ArtistsController } from './artists.controller';
 import { Artist } from './entities/artist.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Album } from 'src/albums/entities/album.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Artist])],
+  imports: [
+    TypeOrmModule.forFeature([Artist]),
+    TypeOrmModule.forFeature([Album]),
+  ],
   controllers: [ArtistsController],
   providers: [ArtistsService],
   exports: [ArtistsService],
