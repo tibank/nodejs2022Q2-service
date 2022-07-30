@@ -1,9 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Album } from 'src/albums/entities/album.entity';
-import { Artist } from 'src/artists/entities/artist.entity';
-import { InMemoryDB } from 'src/helper/app.datastore';
-import { InMemoryFavDB } from 'src/helper/fav.datastorey';
 import { Repository } from 'typeorm';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -14,41 +10,16 @@ export class TracksService {
   constructor(
     @InjectRepository(Track)
     private trackRepository: Repository<Track>,
-    @InjectRepository(Album)
-    private albumRepository: Repository<Album>,
-    @InjectRepository(Artist)
-    private artistRepository: Repository<Artist>,
   ) {}
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
     const newTrack = new Track(createTrackDto);
-    if (createTrackDto.artistId) {
-      const artist: Artist | null = await this.artistRepository.findOneBy({
-        id: createTrackDto.artistId,
-      });
-      if (artist) {
-        newTrack.artist = artist;
-      }
-    }
-    if (createTrackDto.albumId) {
-      const album: Album | null = await this.albumRepository.findOneBy({
-        id: createTrackDto.albumId,
-      });
-      if (album) {
-        newTrack.album = album;
-      }
-    }
 
     return await this.trackRepository.save(newTrack);
   }
 
   async findAll(): Promise<Track[]> {
-    return await this.trackRepository.find({
-      relations: {
-        artist: true,
-        album: true,
-      },
-    });
+    return await this.trackRepository.find();
   }
 
   async findOne(id: string): Promise<Track> {
@@ -66,24 +37,8 @@ export class TracksService {
 
     if (track) {
       Object.assign(track, updateTrackDto);
-      if (updateTrackDto.artistId) {
-        const artist: Artist | null = await this.artistRepository.findOneBy({
-          id: updateTrackDto.artistId,
-        });
-        if (artist) {
-          track.artist = artist;
-        }
-      }
-      if (updateTrackDto.albumId) {
-        const album: Album | null = await this.albumRepository.findOneBy({
-          id: updateTrackDto.albumId,
-        });
-        if (album) {
-          track.album = album;
-        }
-      }
 
-      return this.albumRepository.save(track);
+      return await this.trackRepository.save(track);
     } else {
       throw new NotFoundException(`There is no album with id: ${id}`);
     }

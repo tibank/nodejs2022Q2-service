@@ -1,30 +1,17 @@
-import { Exclude } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
-import { Artist } from 'src/artists/entities/artist.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class FavoriteArtists {
   @PrimaryGeneratedColumn('uuid')
   @IsNotEmpty()
-  @Exclude()
   id: string;
 
+  @Column()
   @IsNotEmpty()
-  @OneToOne(() => Artist, {
-    eager: true,
-  })
-  @JoinColumn()
-  artist: Artist;
+  artistId: string;
 
-  constructor(artist: Artist) {
-    this.artist = artist;
+  constructor(artistId: string) {
+    this.artistId = artistId;
   }
 }

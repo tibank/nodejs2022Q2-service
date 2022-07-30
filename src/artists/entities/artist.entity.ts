@@ -1,7 +1,5 @@
 import { IsBoolean, IsNotEmpty } from 'class-validator';
-import { Album } from 'src/albums/entities/album.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Artist {
@@ -16,9 +14,6 @@ export class Artist {
   @Column({ default: false })
   @IsBoolean()
   grammy: boolean;
-
-  @OneToMany(() => Album, (albun) => albun.artist)
-  albums: Album[];
 
   constructor(partial: Partial<Artist>) {
     Object.assign(this, partial);

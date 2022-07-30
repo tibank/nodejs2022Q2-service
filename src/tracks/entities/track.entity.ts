@@ -1,15 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
 import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Artist } from 'src/artists/entities/artist.entity';
-import { Album } from 'src/albums/entities/album.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Track {
@@ -21,15 +11,13 @@ export class Track {
   @IsNotEmpty()
   name: string;
 
+  @Column({ default: null })
   @IsOptional()
-  @ManyToOne(() => Artist, { onDelete: 'SET NULL', eager: true })
-  @JoinColumn()
-  artist: Artist;
+  artistId: string | null;
 
+  @Column({ default: null })
   @IsOptional()
-  @ManyToOne(() => Album, { onDelete: 'SET NULL', eager: true })
-  @JoinColumn()
-  album: Album;
+  albumId: string | null;
 
   @Column()
   @IsInt()

@@ -8,7 +8,6 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { FavoritesRepsonse } from 'src/helper/fav.response';
 import { Favorite } from './entities/favorite.entity';
 
 @Controller('favs')

@@ -4,11 +4,10 @@ export class CreateTrackDto {
   @IsNotEmpty()
   name: string;
   @IsInt()
+  @IsNotEmpty()
   duration: number;
   @IsOptional()
-  @IsNotEmpty()
   artistId: string | null;
   @IsOptional()
-  @IsNotEmpty()
   albumId: string | null;
 }

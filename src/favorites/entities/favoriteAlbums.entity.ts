@@ -1,14 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { Album } from 'src/albums/entities/album.entity';
-import { Artist } from 'src/artists/entities/artist.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class FavoriteAlbums {
@@ -16,14 +7,11 @@ export class FavoriteAlbums {
   @IsNotEmpty()
   id: string;
 
+  @Column()
   @IsNotEmpty()
-  @OneToOne(() => Album, {
-    eager: true,
-  })
-  @JoinColumn()
-  album: Album;
+  albumId: string;
 
-  constructor(album: Album) {
-    this.album = album;
+  constructor(albumId: string) {
+    this.albumId = albumId;
   }
 }

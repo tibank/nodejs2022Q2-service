@@ -1,6 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { Track } from 'src/tracks/entities/track.entity';
-import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class FavoriteTracks {
@@ -8,14 +7,11 @@ export class FavoriteTracks {
   @IsNotEmpty()
   id: string;
 
+  @Column()
   @IsNotEmpty()
-  @OneToOne(() => Track, {
-    eager: true,
-  })
-  @JoinColumn()
-  track: Track;
+  trackId: string;
 
-  constructor(track: Track) {
-    this.track = track;
+  constructor(trackId: string) {
+    this.trackId = trackId;
   }
 }

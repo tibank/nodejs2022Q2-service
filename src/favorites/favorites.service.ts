@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from 'src/albums/entities/album.entity';
 import { Artist } from 'src/artists/entities/artist.entity';
@@ -31,11 +27,9 @@ export class FavoritesService {
   ) {}
 
   async createArtistFav(id: string): Promise<string> {
-    console.log(id);
     const artist: Artist | null = await this.artistRepository.findOneBy({ id });
-    console.log(artist);
     if (artist) {
-      const newFav = new FavoriteArtists(artist);
+      const newFav = new FavoriteArtists(id);
       await this.artistFavRepository.save(newFav);
     } else {
       throw new UnprocessableEntityException(
@@ -49,7 +43,7 @@ export class FavoritesService {
   async createTrackFav(id: string): Promise<string> {
     const track: Track | null = await this.trackRepository.findOneBy({ id });
     if (track) {
-      const newFav = new FavoriteTracks(track);
+      const newFav = new FavoriteTracks(id);
       await this.trackFavRepository.save(newFav);
     } else {
       throw new UnprocessableEntityException(
@@ -63,7 +57,7 @@ export class FavoritesService {
   async createAlbumFav(id: string): Promise<string> {
     const album: Album | null = await this.albumRepository.findOneBy({ id });
     if (album) {
-      const newFav = new FavoriteAlbums(album);
+      const newFav = new FavoriteAlbums(id);
       await this.albumFavRepository.save(newFav);
     } else {
       throw new UnprocessableEntityException(
@@ -76,14 +70,32 @@ export class FavoritesService {
 
   async findAll(): Promise<Favorite> {
     const artistsFav: FavoriteArtists[] = await this.artistFavRepository.find();
-    console.log(artistsFav);
-    const artists: Artist[] = artistsFav.map((item) => item.artist);
+
+    const artists: Artist[] = [];
+    for (const fav of artistsFav) {
+      const item = await this.artistRepository.findOneBy({ id: fav.artistId });
+      if (item) {
+        artists.push(item);
+      }
+    }
 
     const albumsFav: FavoriteAlbums[] = await this.albumFavRepository.find();
-    const albums: Album[] = albumsFav.map((item) => item.album);
+    const albums: Album[] = [];
+    for (const fav of albumsFav) {
+      const item = await this.albumRepository.findOneBy({ id: fav.albumId });
+      if (item) {
+        albums.push(item);
+      }
+    }
 
     const tracksFav: FavoriteTracks[] = await this.trackFavRepository.find();
-    const tracks: Track[] = tracksFav.map((item) => item.track);
+    const tracks: Track[] = [];
+    for (const fav of tracksFav) {
+      const item = await this.trackRepository.findOneBy({ id: fav.trackId });
+      if (item) {
+        tracks.push(item);
+      }
+    }
 
     const favorite: Favorite = new Favorite(artists, albums, tracks);
 
@@ -93,9 +105,7 @@ export class FavoritesService {
   async removeArtistFav(id: string): Promise<string> {
     const artists: FavoriteArtists[] = await this.artistFavRepository.find({
       where: {
-        artist: {
-          id,
-        },
+        artistId: id,
       },
     });
     console.log(artists);
@@ -107,9 +117,7 @@ export class FavoritesService {
   async removeAlbumFav(id: string): Promise<string> {
     const albums: FavoriteAlbums[] = await this.albumFavRepository.find({
       where: {
-        album: {
-          id,
-        },
+        albumId: id,
       },
     });
     await this.albumFavRepository.remove(albums);
@@ -120,9 +128,7 @@ export class FavoritesService {
   async removeTrackFav(id: string): Promise<string> {
     const tracks: FavoriteTracks[] = await this.trackFavRepository.find({
       where: {
-        track: {
-          id,
-        },
+        trackId: id,
       },
     });
     await this.trackFavRepository.remove(tracks);
