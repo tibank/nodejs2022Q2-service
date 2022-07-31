@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  node:
+    container_name: my-nest-api
+    build: .
+    restart: on-failure
+    networks:
+      - nest_network
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - postgres
+    volumes:
+      - ./:/usr/src/app/
+      - /usr/src/app/node_modules
+    env_file:
+      - .env
+
+  postgres:
+    container_name: my-postgres
+    build: ./database/
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - nest_network
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+networks:
+  nest_network:
