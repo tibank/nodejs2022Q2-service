@@ -8,19 +8,19 @@
 ## Downloading
 
 ```
-git clone https://github.com/tibank/nodejs2022Q2-service/pull/1
+git clone https://github.com/tibank/nodejs2022Q2-service/pull/2
 ```
 
-## Installing NPM modules
+## Create docker images and run docker containers
 
 ```
-npm install
+npm run docker
 ```
 
 ## Running application
 
 ```
-npm start
+npm run start:dev
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -54,6 +54,12 @@ To run only specific test suite with authorization
 
 ```
 npm run test:auth -- <path to suite>
+```
+
+## Downloading docker image with nodejs rest API app
+
+```
+docker pull tibank2071/nodejs2022q2-service-node
 ```
 
 ### Auto-fix and format
