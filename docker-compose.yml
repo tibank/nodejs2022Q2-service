@@ -4,7 +4,7 @@ services:
   node:
     container_name: my-nest-api
     build: .
-    restart: always
+    restart: on-failure
     networks:
       - nest_network
     ports:
