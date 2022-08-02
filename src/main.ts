@@ -6,12 +6,16 @@ import { readFile } from 'fs/promises';
 import { parse } from 'yaml';
 import { cwd } from 'process';
 import { ValidationPipe } from '@nestjs/common';
+import { MyLogger } from './mylogger/mylogger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
+  //app.useLogger(new MyLogger('NEST'));
 
   const DOC_API = await readFile(resolve(cwd(), 'doc', 'api.yaml'), 'utf-8');
   const document = parse(DOC_API);
