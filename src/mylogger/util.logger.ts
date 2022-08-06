@@ -23,7 +23,3 @@ export function isConsoleLogger(): boolean {
 export function isFileLogger(): boolean {
   return ~process.env.LOG_TARGET.toUpperCase().indexOf('FILE') ? true : false;
 }
-
-export function writeMessageintoFile(message: string): void {
-  
-}

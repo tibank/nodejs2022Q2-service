@@ -9,7 +9,11 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import configDb from './helper/ormconfig';
-import { LoggerMiddleware } from './mylogger/logger.middleware';
+import { MyLoggerMiddleware } from './mylogger/mylogger.middleware';
+import { MyLoggerModule } from './mylogger/mylogger.module';
+import { LogWriterModule } from './logwriter/logwriter.module';
+import { MyLoggerInterceptor } from './mylogger/mylogger.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -22,12 +26,20 @@ import { LoggerMiddleware } from './mylogger/logger.middleware';
     TracksModule,
     AlbumsModule,
     FavoritesModule,
+    LogWriterModule,
+    MyLoggerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MyLoggerInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(MyLoggerMiddleware).forRoutes('*');
   }
 }

@@ -1,19 +1,17 @@
-import { Injectable, LoggerService, Optional, Scope } from '@nestjs/common';
+import { Inject, Injectable, LoggerService, Scope } from '@nestjs/common';
 import {
   isConsoleLogger,
   isFileLogger,
   isLogLevelEnabled,
 } from './util.logger';
-import path from 'path';
-import { cwd } from 'process';
+import { LogLevel } from './loglevels.type';
+import { LogWriter } from 'src/logwriter/logwriter.service';
 
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable()
 export class MyLogger implements LoggerService {
   private context?: string;
 
-  constructor(@Optional() context: string) {
-    this.context = context;
-  }
+  constructor(private readonly logWriterFile: LogWriter) {}
 
   setContext(context: string): void {
     this.context = context;
@@ -37,27 +35,45 @@ export class MyLogger implements LoggerService {
   private getFormattedMessage(level: string, message: any): string {
     let formattedMessage: string = '';
     if (typeof message === 'object') {
-      formattedMessage = JSON.stringify(message,null,2)
+      formattedMessage = '\n' + JSON.stringify(message, null, 2);
     } else {
-      formattedMessage = message
+      formattedMessage = message;
     }
 
-    return `[Nest] ${this.getFormattedTimeStamp()} ${level} 
-            [${this.context}] ${formattedMessage}`;
+    return `[Nest] ${this.getFormattedTimeStamp()} ${level} [${
+      this.context
+    }] ${formattedMessage}\n`;
   }
 
-  log(message: any, ...optionalParams: any[]) {
-    if (isLogLevelEnabled('log')) {
+  private makeLog(level: LogLevel, message: any) {
+    if (isLogLevelEnabled(level)) {
+      const strMessage = this.getFormattedMessage(
+        level.toLocaleUpperCase(),
+        message,
+      );
       if (isConsoleLogger()) {
-        console.log(this.getFormattedMessage('LOG', message));
+        console.log(strMessage);
       }
 
       if (isFileLogger()) {
+        this.logWriterFile.writeToFile(strMessage);
       }
     }
   }
-  error(message: any, ...optionalParams: any[]) {}
-  warn(message: any, ...optionalParams: any[]) {}
-  debug?(message: any, ...optionalParams: any[]) {}
-  verbose?(message: any, ...optionalParams: any[]) {}
+
+  log(message: any, ...optionalParams: any[]) {
+    this.makeLog('log', message);
+  }
+  error(message: any, ...optionalParams: any[]) {
+    this.makeLog('error', message);
+  }
+  warn(message: any, ...optionalParams: any[]) {
+    this.makeLog('warn', message);
+  }
+  debug?(message: any, ...optionalParams: any[]) {
+    this.makeLog('debug', message);
+  }
+  verbose?(message: any, ...optionalParams: any[]) {
+    this.makeLog('verbose', message);
+  }
 }
