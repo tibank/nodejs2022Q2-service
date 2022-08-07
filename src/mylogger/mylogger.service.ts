@@ -1,4 +1,4 @@
-import { Inject, Injectable, LoggerService, Scope } from '@nestjs/common';
+import { Injectable, LoggerService } from '@nestjs/common';
 import {
   isConsoleLogger,
   isFileLogger,
@@ -33,7 +33,7 @@ export class MyLogger implements LoggerService {
   }
 
   private getFormattedMessage(level: string, message: any): string {
-    let formattedMessage: string = '';
+    let formattedMessage = '';
     if (typeof message === 'object') {
       formattedMessage = '\n' + JSON.stringify(message, null, 2);
     } else {
@@ -42,7 +42,7 @@ export class MyLogger implements LoggerService {
 
     return `[Nest] ${this.getFormattedTimeStamp()} ${level} [${
       this.context
-    }] ${formattedMessage}\n`;
+    }] ${formattedMessage}`;
   }
 
   private makeLog(level: LogLevel, message: any) {
@@ -61,19 +61,19 @@ export class MyLogger implements LoggerService {
     }
   }
 
-  log(message: any, ...optionalParams: any[]) {
+  log(message: any) {
     this.makeLog('log', message);
   }
-  error(message: any, ...optionalParams: any[]) {
+  error(message: any) {
     this.makeLog('error', message);
   }
-  warn(message: any, ...optionalParams: any[]) {
+  warn(message: any) {
     this.makeLog('warn', message);
   }
-  debug?(message: any, ...optionalParams: any[]) {
+  debug?(message: any) {
     this.makeLog('debug', message);
   }
-  verbose?(message: any, ...optionalParams: any[]) {
+  verbose?(message: any) {
     this.makeLog('verbose', message);
   }
 }

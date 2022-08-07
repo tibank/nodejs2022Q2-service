@@ -3,9 +3,8 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  Inject,
 } from '@nestjs/common';
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { MyLogger } from './mylogger.service';
 import { Request, Response } from 'express';

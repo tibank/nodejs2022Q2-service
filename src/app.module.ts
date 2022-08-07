@@ -13,7 +13,8 @@ import { MyLoggerMiddleware } from './mylogger/mylogger.middleware';
 import { MyLoggerModule } from './mylogger/mylogger.module';
 import { LogWriterModule } from './logwriter/logwriter.module';
 import { MyLoggerInterceptor } from './mylogger/mylogger.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { AllExceptionsFilter } from './mylogger/allexception.filter';
 
 @Module({
   imports: [
@@ -35,6 +36,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     {
       provide: APP_INTERCEPTOR,
       useClass: MyLoggerInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
   ],
 })
