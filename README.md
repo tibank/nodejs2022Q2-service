@@ -28,6 +28,25 @@ in your browser OpenAPI documentation by typing http://localhost:{PORT}/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 You can change PORT in the .env file
 
+## Tuning logging
+
+You can set destination logging to console, file or both seeting variable 
+### LOG_TARGET=ConsoleFile
+
+You can set log level from next levels
+  debug: 4,
+  verbose: 3,
+  log: 2,
+  warn: 1,
+  error: 0
+### LOG_LEVEL=2
+
+You can set size of log files in KB. If this size is exceeded file will be rotated
+### LOG_MAX_SIZ=10
+
+You can set prefix of log files
+### LOG_FILE_PREFIX=log-nest
+
 ## Testing
 
 After application running open new terminal and enter:

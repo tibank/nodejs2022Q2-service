@@ -1,6 +1,6 @@
 import { LogLevel } from './loglevels.type';
 
-const LOG_LEVEL_VALUES: Record<LogLevel, number> = {
+export const LOG_LEVEL_VALUES: Record<LogLevel, number> = {
   debug: 4,
   verbose: 3,
   log: 2,
