@@ -1,11 +1,11 @@
 import { LogLevel } from './loglevels.type';
 
 const LOG_LEVEL_VALUES: Record<LogLevel, number> = {
-  debug: 0,
-  verbose: 1,
+  debug: 4,
+  verbose: 3,
   log: 2,
-  warn: 3,
-  error: 4,
+  warn: 1,
+  error: 0,
 };
 
 export function isLogLevelEnabled(level: LogLevel): boolean {
