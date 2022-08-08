@@ -1,10 +1,50 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { ArtistsModule } from './artists/artists.module';
+import { TracksModule } from './tracks/tracks.module';
+import { AlbumsModule } from './albums/albums.module';
+import { FavoritesModule } from './favorites/favorites.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import configDb from './helper/ormconfig';
+import { MyLoggerMiddleware } from './mylogger/mylogger.middleware';
+import { MyLoggerModule } from './mylogger/mylogger.module';
+import { LogWriterModule } from './logwriter/logwriter.module';
+import { MyLoggerInterceptor } from './mylogger/mylogger.interceptor';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { AllExceptionsFilter } from './mylogger/allexception.filter';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRoot(configDb()),
+    UsersModule,
+    ArtistsModule,
+    TracksModule,
+    AlbumsModule,
+    FavoritesModule,
+    LogWriterModule,
+    MyLoggerModule,
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MyLoggerInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MyLoggerMiddleware).forRoutes('*');
+  }
+}
